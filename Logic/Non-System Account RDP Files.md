@@ -17,10 +17,4 @@ DeviceLogonEvents
 | where FileAccountName == AccountName
 | summarize FileCount = count() by AccountName
 | sort by FileCount desc
-
-//Enrich file hash with Microsoft's threat intelligence.
-DeviceFileEvents
-| where ActionType == "FileCreated"
-| summarize by SHA1
-| invoke FileProfile("SHA1", 1000)
 ```
