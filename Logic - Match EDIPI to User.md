@@ -1,3 +1,8 @@
+# Matches EDIPI (Navy CAC code) to user
+
+#### Note
+Used specifically for Navy systems, may not be useful outside Navy.
+
 ## Sentinel
 ```KQL
 //Pulls EDIPI from Syslog and finds the user account associated with it
@@ -17,4 +22,4 @@ IdentityInfo
 | where Employee matches regex @"^\d$"
 | join kind=inner (Users) on Prefix
 | summarize count()by AccountName, EmployeeId
-```
+``
