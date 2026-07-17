@@ -1,4 +1,4 @@
-# User Entity Behavior Analytic query to find unusual user activity.
+# User Entity Behavior Analytic (UEBA) query to find unusual user activity.
 
 ## MDE
 ```KQL
