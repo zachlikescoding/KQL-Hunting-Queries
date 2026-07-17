@@ -1,0 +1,33 @@
+# Go beyond default environment results limit
+
+#### Note
+This was used on Navy specific environment, may not apply elsewhere
+
+## MDE
+```KQL
+//How to get results beyond default 30k cap 
+let PLA = DeviceInfo 
+| summarize arg_max(TimeGenerated, RegistryDeviceTag) by DeviceId 
+| where RegistryDeviceTag in ('INSERT REGISTRY DEVICE TAGS HERE') //Add registry tags you want here 
+| project DeviceId; 
+let mQuery = DeviceNetworkEvents 
+| where DeviceId in (PLA) 
+| where TimeGenerated >= ago(31d) and ActionType == "ConnectionSuccess" 
+| where isnotempty(RemoteUrl) 
+| project DeviceId, TimeGenerated, RemoteUrl, RemoteIP, ActionType //Change these to what fields you want 
+| serialize 
+| extend tt_RowNumber = row_number(); 
+let plan = mQuery 
+| extend tt_jsonResult = tostring(pack_all(true)) 
+| extend tt_queryResultSize = strlen(tt_jsonResult) 
+| summarize totalSizeBytes = sum(tt_queryResultSize), totalRowCount = count() 
+| extend chunks = ceiling(totalSizeBytes / 150000.00) 
+| extend rowsPerChunk = iif(totalRowCount == 0, 1, tolong(totalRowCount / chunks)) 
+| summarize rowsPerChunk = max(rowsPerChunk); 
+mQuery 
+| extend tt_Chunk = ceiling(tt_RowNumber / (toscalar(plan))) 
+| project-away tt_RowNumber 
+| extend r = pack_all(true) 
+| summarize results = make_list(r) by tt_Chunk 
+| project-away tt_Chunk 
+```
