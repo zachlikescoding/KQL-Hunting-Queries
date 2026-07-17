@@ -3,7 +3,7 @@
 ## MDE
 ```KQL
 //Alerts for specific device
-let Device = 'host.domain.tld';
+let Device = ENTER_DEVICE_HERE';
 let TimeFrame = 7d;
 AlertEvidence
 | where DeviceName =~ Device
