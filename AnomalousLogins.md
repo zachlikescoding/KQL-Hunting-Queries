@@ -21,11 +21,7 @@ DeviceLogonEvents
 | extend (Anomalies, Score, Baseline) =
 	series_decompose_anomalies(DailyLogons)
 //Break out series into readable separate events we can use
-| mv-expand
-	Timestamp,
-	DailyLogons,
-	Anomalies,
-	Score
+| mv-expand Timestamp, DailyLogons, Anomalies, Score
 //Only show anomalous events
 //| where Anomalies != 0
 | project Timestamp, AccountName, DailyLogons, Score
